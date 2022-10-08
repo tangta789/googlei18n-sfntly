@@ -28,6 +28,8 @@ import com.google.typography.font.tools.subsetter.RenumberingSubsetter;
 import com.google.typography.font.tools.subsetter.Subsetter;
 
 import java.io.File;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -67,7 +69,21 @@ public class SfntTool {
           nIters = 10000;
         } else if (option.equals("h") || option.equals("hints")) {
           tool.strip = true;
-        } else if (option.equals("s") || option.equals("string")) {
+               } else if (option.equals("f") || option.equals("file")) {
+                       File filename = new File(args[i + 1]);
+                       InputStreamReader reader = new InputStreamReader(new FileInputStream(filename));
+                       BufferedReader br = new BufferedReader(reader);
+                       StringBuilder result = new StringBuilder();
+                       String line = null;
+                       while((line = br.readLine()) != null) {
+                               result.append(line);
+                               result.append(System.lineSeparator());
+                       }
+                       tool.subsetString = new String(result);
+                       //System.out.println(tool.subsetString);
+                       br.close();
+                       i++;
+               } else if (option.equals("s") || option.equals("string")) {
           tool.subsetString = args[i + 1];
           i++;
         } else if (option.equals("w") || option.equals("woff")) {
@@ -107,6 +123,7 @@ public class SfntTool {
     System.out.println("Prototype font subsetter");
     System.out.println("\t-?,-help\tprint this help information");
     System.out.println("\t-s,-string\t String to subset");
+    System.out.println("\t-f,-file\t file String to subset");
     System.out.println("\t-b,-bench\t Benchmark (run 10000 iterations)");
     System.out.println("\t-h,-hints\t Strip hints");
     System.out.println("\t-w,-woff\t Output WOFF format");
